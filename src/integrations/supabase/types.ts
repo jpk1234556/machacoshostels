@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_activity_logs: {
-        Row: {
-          action: string
-          admin_id: string
-          created_at: string
-          details: Json | null
-          id: string
-          target_user_email: string | null
-          target_user_id: string | null
-        }
-        Insert: {
-          action: string
-          admin_id: string
-          created_at?: string
-          details?: Json | null
-          id?: string
-          target_user_email?: string | null
-          target_user_id?: string | null
-        }
-        Update: {
-          action?: string
-          admin_id?: string
-          created_at?: string
-          details?: Json | null
-          id?: string
-          target_user_email?: string | null
-          target_user_id?: string | null
-        }
-        Relationships: []
-      }
       leases: {
         Row: {
           created_at: string | null
