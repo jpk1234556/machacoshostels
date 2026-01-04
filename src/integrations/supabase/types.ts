@@ -211,11 +211,25 @@ export type Database = {
         Row: {
           approval_status: Database["public"]["Enums"]["approval_status"] | null
           avatar_url: string | null
+          billing_address: string | null
+          city: string | null
+          country: string | null
           created_at: string | null
+          date_of_birth: string | null
           email: string
           full_name: string | null
           id: string
+          id_document_url: string | null
+          id_number: string | null
+          id_type: string | null
+          payment_method: string | null
+          payment_provider: string | null
           phone: string | null
+          postal_code: string | null
+          residential_address: string | null
+          security_deposit_agreed: boolean | null
+          terms_accepted: boolean | null
+          terms_accepted_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -223,11 +237,25 @@ export type Database = {
             | Database["public"]["Enums"]["approval_status"]
             | null
           avatar_url?: string | null
+          billing_address?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email: string
           full_name?: string | null
           id: string
+          id_document_url?: string | null
+          id_number?: string | null
+          id_type?: string | null
+          payment_method?: string | null
+          payment_provider?: string | null
           phone?: string | null
+          postal_code?: string | null
+          residential_address?: string | null
+          security_deposit_agreed?: boolean | null
+          terms_accepted?: boolean | null
+          terms_accepted_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -235,11 +263,25 @@ export type Database = {
             | Database["public"]["Enums"]["approval_status"]
             | null
           avatar_url?: string | null
+          billing_address?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email?: string
           full_name?: string | null
           id?: string
+          id_document_url?: string | null
+          id_number?: string | null
+          id_type?: string | null
+          payment_method?: string | null
+          payment_provider?: string | null
           phone?: string | null
+          postal_code?: string | null
+          residential_address?: string | null
+          security_deposit_agreed?: boolean | null
+          terms_accepted?: boolean | null
+          terms_accepted_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
