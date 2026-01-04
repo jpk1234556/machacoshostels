@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { formatCurrency } from '@/lib/currency';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -261,7 +262,7 @@ export default function Payments() {
                   <TableRow key={payment.id}>
                     <TableCell className="font-medium">{payment.leases?.tenants?.full_name}</TableCell>
                     <TableCell>{payment.leases?.units?.unit_number}</TableCell>
-                    <TableCell>${payment.amount}</TableCell>
+                    <TableCell>{formatCurrency(payment.amount)}</TableCell>
                     <TableCell>{format(new Date(payment.due_date), 'MMM d, yyyy')}</TableCell>
                     <TableCell><Badge className={statusColors[payment.status]}>{payment.status}</Badge></TableCell>
                     <TableCell>

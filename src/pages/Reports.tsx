@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatCurrency } from '@/lib/currency';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
@@ -257,7 +258,7 @@ export default function Reports() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${summaryStats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">{formatCurrency(summaryStats.totalRevenue)}</div>
               <p className="text-xs text-muted-foreground mt-1">From paid invoices</p>
             </CardContent>
           </Card>

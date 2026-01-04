@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { formatCurrency } from '@/lib/currency';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -292,7 +293,7 @@ export default function Leases() {
                     <TableCell className="text-sm">
                       {format(new Date(lease.start_date), 'MMM d, yyyy')} - {format(new Date(lease.end_date), 'MMM d, yyyy')}
                     </TableCell>
-                    <TableCell>${lease.monthly_rent}/mo</TableCell>
+                    <TableCell>{formatCurrency(lease.monthly_rent)}/mo</TableCell>
                     <TableCell><Badge className={statusColors[lease.status]}>{lease.status.replace('_', ' ')}</Badge></TableCell>
                     <TableCell>
                       <DropdownMenu>
