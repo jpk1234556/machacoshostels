@@ -14,7 +14,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Building2,
   LayoutDashboard,
@@ -28,6 +28,7 @@ import {
   LogOut,
   ChevronRight,
   BarChart3,
+  Settings,
 } from 'lucide-react';
 
 const ownerNavItems = [
@@ -124,23 +125,27 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border">
         <div className="p-2">
-          <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent transition-colors">
-            <Avatar className="h-8 w-8 shrink-0">
-              <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs">
-                {getInitials(profile?.full_name)}
-              </AvatarFallback>
-            </Avatar>
-            {!isCollapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-accent-foreground truncate">
-                  {profile?.full_name || 'User'}
-                </p>
-                <p className="text-xs text-sidebar-foreground truncate">
-                  {profile?.email}
-                </p>
-              </div>
-            )}
-          </div>
+          <Link to="/profile">
+            <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer">
+              <Avatar className="h-8 w-8 shrink-0">
+                <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || 'User'} />
+                <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-xs">
+                  {getInitials(profile?.full_name)}
+                </AvatarFallback>
+              </Avatar>
+              {!isCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-sidebar-accent-foreground truncate">
+                    {profile?.full_name || 'User'}
+                  </p>
+                  <p className="text-xs text-sidebar-foreground truncate">
+                    {profile?.email}
+                  </p>
+                </div>
+              )}
+              {!isCollapsed && <Settings className="h-4 w-4 text-sidebar-foreground" />}
+            </div>
+          </Link>
           <Button
             variant="ghost"
             size={isCollapsed ? 'icon' : 'sm'}

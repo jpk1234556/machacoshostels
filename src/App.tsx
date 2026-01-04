@@ -15,6 +15,7 @@ import Payments from "./pages/Payments";
 import Maintenance from "./pages/Maintenance";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
+import ProfileSettings from "./pages/ProfileSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/maintenance" element={<Maintenance />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/profile" element={<ProfileSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
