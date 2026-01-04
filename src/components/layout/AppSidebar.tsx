@@ -44,7 +44,7 @@ const ownerNavItems = [
 
 const adminNavItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-  { title: 'User Management', url: '/admin', icon: Users },
+  { title: 'User Management', url: '/admin/users', icon: Users },
 ];
 
 export function AppSidebar() {
