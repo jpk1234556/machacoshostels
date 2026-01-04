@@ -17,6 +17,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { format } from 'date-fns';
 
 type LeaseStatus = 'active' | 'expiring_soon' | 'expired' | 'terminated';
+type PaymentSchedule = 'monthly' | 'semester' | 'annual';
 
 interface Lease {
   id: string;
@@ -27,6 +28,8 @@ interface Lease {
   monthly_rent: number;
   deposit_amount: number | null;
   status: LeaseStatus;
+  payment_schedule: PaymentSchedule;
+  semester_amount: number | null;
   notes: string | null;
   units?: { unit_number: string; properties?: { name: string } };
   tenants?: { full_name: string };
@@ -60,6 +63,8 @@ export default function Leases() {
     monthly_rent: 0,
     deposit_amount: 0,
     status: 'active' as LeaseStatus,
+    payment_schedule: 'monthly' as PaymentSchedule,
+    semester_amount: 0,
     notes: '',
   });
 
@@ -93,6 +98,7 @@ export default function Leases() {
       const submitData = {
         ...formData,
         deposit_amount: formData.deposit_amount || null,
+        semester_amount: formData.payment_schedule === 'semester' ? formData.semester_amount : null,
         notes: formData.notes || null,
       };
 
@@ -137,6 +143,8 @@ export default function Leases() {
       monthly_rent: lease.monthly_rent,
       deposit_amount: lease.deposit_amount || 0,
       status: lease.status,
+      payment_schedule: lease.payment_schedule || 'monthly',
+      semester_amount: lease.semester_amount || 0,
       notes: lease.notes || '',
     });
     setDialogOpen(true);
@@ -152,6 +160,8 @@ export default function Leases() {
       monthly_rent: 0,
       deposit_amount: 0,
       status: 'active',
+      payment_schedule: 'monthly',
+      semester_amount: 0,
       notes: '',
     });
   };
@@ -219,14 +229,17 @@ export default function Leases() {
                     <Input type="date" value={formData.end_date} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} required />
                   </div>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label>Monthly Rent</Label>
-                    <Input type="number" min={0} value={formData.monthly_rent} onChange={(e) => setFormData({ ...formData, monthly_rent: parseFloat(e.target.value) || 0 })} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Deposit</Label>
-                    <Input type="number" min={0} value={formData.deposit_amount} onChange={(e) => setFormData({ ...formData, deposit_amount: parseFloat(e.target.value) || 0 })} />
+                    <Label>Payment Schedule</Label>
+                    <Select value={formData.payment_schedule} onValueChange={(v) => setFormData({ ...formData, payment_schedule: v as PaymentSchedule })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="semester">Semester</SelectItem>
+                        <SelectItem value="annual">Annual</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>Status</Label>
@@ -239,6 +252,23 @@ export default function Leases() {
                         <SelectItem value="terminated">Terminated</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {formData.payment_schedule === 'semester' ? (
+                    <div className="space-y-2">
+                      <Label>Semester Amount</Label>
+                      <Input type="number" min={0} value={formData.semester_amount} onChange={(e) => setFormData({ ...formData, semester_amount: parseFloat(e.target.value) || 0 })} required />
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label>{formData.payment_schedule === 'annual' ? 'Annual Rent' : 'Monthly Rent'}</Label>
+                      <Input type="number" min={0} value={formData.monthly_rent} onChange={(e) => setFormData({ ...formData, monthly_rent: parseFloat(e.target.value) || 0 })} required />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Label>Deposit</Label>
+                    <Input type="number" min={0} value={formData.deposit_amount} onChange={(e) => setFormData({ ...formData, deposit_amount: parseFloat(e.target.value) || 0 })} />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -293,7 +323,13 @@ export default function Leases() {
                     <TableCell className="text-sm">
                       {format(new Date(lease.start_date), 'MMM d, yyyy')} - {format(new Date(lease.end_date), 'MMM d, yyyy')}
                     </TableCell>
-                    <TableCell>{formatCurrency(lease.monthly_rent)}/mo</TableCell>
+                    <TableCell>
+                      {lease.payment_schedule === 'semester' 
+                        ? `${formatCurrency(lease.semester_amount || 0)}/sem`
+                        : lease.payment_schedule === 'annual'
+                        ? `${formatCurrency(lease.monthly_rent)}/yr`
+                        : `${formatCurrency(lease.monthly_rent)}/mo`}
+                    </TableCell>
                     <TableCell><Badge className={statusColors[lease.status]}>{lease.status.replace('_', ' ')}</Badge></TableCell>
                     <TableCell>
                       <DropdownMenu>
