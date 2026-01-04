@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
-import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
-import { cn } from '@/lib/utils';
 import {
   ChartContainer,
   ChartTooltip,
@@ -22,10 +17,13 @@ import {
   PieChart,
   Pie,
   Cell,
+  LineChart,
+  Line,
+  ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TrendingUp, TrendingDown, DollarSign, Home, Users, Wrench, CalendarIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Home, Users, Wrench } from 'lucide-react';
 
 interface OccupancyData {
   name: string;
@@ -71,10 +69,6 @@ const maintenanceChartConfig = {
 
 export default function Reports() {
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-    from: startOfMonth(subMonths(new Date(), 5)),
-    to: endOfMonth(new Date()),
-  });
   const [occupancyData, setOccupancyData] = useState<OccupancyData[]>([]);
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [maintenanceData, setMaintenanceData] = useState<MaintenanceData[]>([]);
@@ -88,10 +82,9 @@ export default function Reports() {
 
   useEffect(() => {
     fetchReportData();
-  }, [dateRange]);
+  }, []);
 
   const fetchReportData = async () => {
-    setLoading(true);
     try {
       // Fetch units for occupancy data
       const { data: units } = await supabase.from('units').select('status, property_id');
@@ -99,19 +92,11 @@ export default function Reports() {
       // Fetch properties
       const { data: properties } = await supabase.from('properties').select('id, name');
       
-      // Fetch payments within date range
-      const { data: payments } = await supabase
-        .from('payments')
-        .select('amount, status, payment_date, due_date')
-        .gte('due_date', format(dateRange.from, 'yyyy-MM-dd'))
-        .lte('due_date', format(dateRange.to, 'yyyy-MM-dd'));
+      // Fetch payments
+      const { data: payments } = await supabase.from('payments').select('amount, status, payment_date, due_date');
       
-      // Fetch maintenance requests within date range
-      const { data: maintenance } = await supabase
-        .from('maintenance_requests')
-        .select('priority, status, created_at')
-        .gte('created_at', dateRange.from.toISOString())
-        .lte('created_at', dateRange.to.toISOString());
+      // Fetch maintenance requests
+      const { data: maintenance } = await supabase.from('maintenance_requests').select('priority, status');
       
       // Fetch tenants count
       const { count: tenantsCount } = await supabase.from('tenants').select('id', { count: 'exact', head: true });
@@ -151,17 +136,17 @@ export default function Reports() {
         setSummaryStats(prev => ({ ...prev, occupancyRate }));
       }
 
-      // Calculate payment data by month within date range
+      // Calculate payment data by month
       if (payments) {
         const monthlyPayments: Record<string, { paid: number; pending: number; overdue: number }> = {};
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         
-        // Initialize months within the date range
-        let current = new Date(dateRange.from);
-        while (current <= dateRange.to) {
-          const monthKey = `${months[current.getMonth()]} ${current.getFullYear().toString().slice(-2)}`;
+        // Initialize last 6 months
+        const now = new Date();
+        for (let i = 5; i >= 0; i--) {
+          const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const monthKey = `${months[date.getMonth()]} ${date.getFullYear().toString().slice(-2)}`;
           monthlyPayments[monthKey] = { paid: 0, pending: 0, overdue: 0 };
-          current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
         }
 
         payments.forEach(payment => {
@@ -209,13 +194,6 @@ export default function Reports() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePresetRange = (months: number) => {
-    setDateRange({
-      from: startOfMonth(subMonths(new Date(), months - 1)),
-      to: endOfMonth(new Date()),
-    });
   };
 
   const COLORS = [
@@ -266,74 +244,9 @@ export default function Reports() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-display font-bold">Reports</h1>
-            <p className="text-muted-foreground mt-1">Analytics and insights for your properties</p>
-          </div>
-          
-          {/* Date Range Filter */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex gap-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePresetRange(3)}
-                className={cn(
-                  "text-xs",
-                  format(dateRange.from, 'yyyy-MM') === format(subMonths(new Date(), 2), 'yyyy-MM') && "bg-accent"
-                )}
-              >
-                3M
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePresetRange(6)}
-                className={cn(
-                  "text-xs",
-                  format(dateRange.from, 'yyyy-MM') === format(subMonths(new Date(), 5), 'yyyy-MM') && "bg-accent"
-                )}
-              >
-                6M
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePresetRange(12)}
-                className={cn(
-                  "text-xs",
-                  format(dateRange.from, 'yyyy-MM') === format(subMonths(new Date(), 11), 'yyyy-MM') && "bg-accent"
-                )}
-              >
-                1Y
-              </Button>
-            </div>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(dateRange.from, "MMM d, yyyy")} - {format(dateRange.to, "MMM d, yyyy")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
-                <Calendar
-                  mode="range"
-                  selected={{ from: dateRange.from, to: dateRange.to }}
-                  onSelect={(range) => {
-                    if (range?.from && range?.to) {
-                      setDateRange({ from: range.from, to: range.to });
-                    } else if (range?.from) {
-                      setDateRange({ from: range.from, to: range.from });
-                    }
-                  }}
-                  numberOfMonths={2}
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        <div>
+          <h1 className="text-3xl font-display font-bold">Reports</h1>
+          <p className="text-muted-foreground mt-1">Analytics and insights for your properties</p>
         </div>
 
         {/* Summary Stats */}
