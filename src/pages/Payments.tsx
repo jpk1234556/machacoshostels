@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '@/lib/currency';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, CreditCard, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { Plus, CreditCard, MoreVertical, Pencil, Trash2, Receipt } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 
@@ -38,6 +39,7 @@ interface Lease {
 }
 
 export default function Payments() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [leases, setLeases] = useState<Lease[]>([]);
@@ -271,6 +273,7 @@ export default function Payments() {
                           <Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/receipt?id=${payment.id}`)}><Receipt className="h-4 w-4 mr-2" />Print Receipt</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleEdit(payment)}><Pencil className="h-4 w-4 mr-2" />Edit</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleDelete(payment.id)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
                         </DropdownMenuContent>
