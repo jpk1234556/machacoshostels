@@ -13,6 +13,7 @@ import Tenants from "./pages/Tenants";
 import Leases from "./pages/Leases";
 import Payments from "./pages/Payments";
 import Maintenance from "./pages/Maintenance";
+import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/leases" element={<Leases />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/maintenance" element={<Maintenance />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
