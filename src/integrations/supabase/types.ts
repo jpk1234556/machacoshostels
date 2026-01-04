@@ -22,6 +22,10 @@ export type Database = {
           id: string
           monthly_rent: number
           notes: string | null
+          payment_schedule:
+            | Database["public"]["Enums"]["payment_schedule"]
+            | null
+          semester_amount: number | null
           start_date: string
           status: Database["public"]["Enums"]["lease_status"] | null
           tenant_id: string
@@ -35,6 +39,10 @@ export type Database = {
           id?: string
           monthly_rent: number
           notes?: string | null
+          payment_schedule?:
+            | Database["public"]["Enums"]["payment_schedule"]
+            | null
+          semester_amount?: number | null
           start_date: string
           status?: Database["public"]["Enums"]["lease_status"] | null
           tenant_id: string
@@ -48,6 +56,10 @@ export type Database = {
           id?: string
           monthly_rent?: number
           notes?: string | null
+          payment_schedule?:
+            | Database["public"]["Enums"]["payment_schedule"]
+            | null
+          semester_amount?: number | null
           start_date?: string
           status?: Database["public"]["Enums"]["lease_status"] | null
           tenant_id?: string
@@ -371,6 +383,7 @@ export type Database = {
       lease_status: "active" | "expiring_soon" | "expired" | "terminated"
       maintenance_priority: "low" | "medium" | "high" | "urgent"
       maintenance_status: "pending" | "in_progress" | "resolved"
+      payment_schedule: "monthly" | "semester" | "annual"
       payment_status: "paid" | "pending" | "overdue"
       property_type: "hostel" | "apartment" | "hotel" | "rental"
       unit_status: "available" | "occupied" | "maintenance"
@@ -506,6 +519,7 @@ export const Constants = {
       lease_status: ["active", "expiring_soon", "expired", "terminated"],
       maintenance_priority: ["low", "medium", "high", "urgent"],
       maintenance_status: ["pending", "in_progress", "resolved"],
+      payment_schedule: ["monthly", "semester", "annual"],
       payment_status: ["paid", "pending", "overdue"],
       property_type: ["hostel", "apartment", "hotel", "rental"],
       unit_status: ["available", "occupied", "maintenance"],
