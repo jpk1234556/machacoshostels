@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { formatCurrency } from '@/lib/currency';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -270,7 +271,7 @@ export default function Units() {
                   </div>
                   <div className="flex items-center justify-between">
                     <Badge className={statusColors[unit.status]}>{unit.status}</Badge>
-                    <span className="font-semibold">${unit.rent_amount}/mo</span>
+                    <span className="font-semibold">{formatCurrency(unit.rent_amount)}/mo</span>
                   </div>
                 </CardContent>
               </Card>
