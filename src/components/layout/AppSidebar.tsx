@@ -27,6 +27,7 @@ import {
   Shield,
   LogOut,
   ChevronRight,
+  BarChart3,
 } from 'lucide-react';
 
 const ownerNavItems = [
@@ -37,6 +38,7 @@ const ownerNavItems = [
   { title: 'Leases', url: '/leases', icon: FileText },
   { title: 'Payments', url: '/payments', icon: CreditCard },
   { title: 'Maintenance', url: '/maintenance', icon: Wrench },
+  { title: 'Reports', url: '/reports', icon: BarChart3 },
 ];
 
 const adminNavItems = [
